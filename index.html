@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 Canvas</title>
+  </head>
+  <body>
+    <canvas id="draw" width="800" height="800"></canvas>
+    <script>
+      const canvas = document.querySelector("#draw")
+      const ctx = canvas.getContext("2d")
+
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+
+      ctx.strokeStyle = "#BADA55"
+      ctx.lineJoin = "round" // when line meet the line it shouldn't be square off
+      ctx.lineCap = "round" // the ending should be round
+
+      let isDrawing = false // we set it to not to draw when the mouse is not pressed
+      let lastX = 0
+      let lastY = 0
+      let hue = 0
+      let direction = true //that means it's gonna build up
+
+      function draw(e) {
+        // will be called whenever we will move on the canvas
+        if (!isDrawing) return //stop function from running when mouse is not pressed downn
+        console.log(e)
+        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`
+        ctx.beginPath()
+        //start from
+        ctx.moveTo(lastX, lastY)
+        //go to
+        ctx.lineTo(e.offsetX, e.offsetY) // offset - plae where we click inside of element
+        ctx.stroke()
+        lastX = e.offsetX
+        lastY = e.offsetY
+        hue++ // it will increment the hue = make a gradient effect
+        if (hue >= 360) {
+          hue = 0
+        } // gonna reset the code after 360;
+        if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+          direction = !direction // when it's more than 100 or les than 1 flip de direction
+        }
+        if (direction) {
+          ctx.lineWidth++ //we increment it to 100
+        } else {
+          ctx.lineWidth-- //when it will hit 100 it will go down
+        }
+      }
+
+      canvas.addEventListener("mousedown", e => {
+        isDrawing = true
+        lastX = e.offsetX
+        lastY = e.offsetY
+      })
+
+      canvas.addEventListener("mousemove", draw)
+      canvas.addEventListener("mouseup", () => (isDrawing = false))
+      canvas.addEventListener("mouseout", () => (isDrawing = false)) // when the mouse is leaving the canvas and coming back it will not draw
+    </script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+    </style>
+  </body>
+</html>
